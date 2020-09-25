@@ -18,8 +18,8 @@ function App({ count }) {
     fetchData();
   }, []);
 
-  let getPokemonInfo = (pokemon) => {
-    setSelectedPokemon(pokemon);
+  let getPokemonInfo = (pokemon, id) => {
+    setSelectedPokemon({ ...pokemon, id });
   };
   console.log("выбранный покемон =>", selectedPokemon);
   return (
@@ -43,7 +43,7 @@ function App({ count }) {
                     <NavLink to={`/pokemon/${index + 1}`}>
                       {" "}
                       <Button
-                        onClick={() => getPokemonInfo(pokemon)}
+                        onClick={() => getPokemonInfo(pokemon, index + 1)}
                         variant="primary"
                       >
                         Get more info
