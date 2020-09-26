@@ -6,7 +6,6 @@ import * as serviceWorker from "./serviceWorker";
 import { Provider } from "react-redux";
 import store from "./Redux/store";
 import { BrowserRouter, Route } from "react-router-dom";
-import Pokemon from "./Pokemon";
 
 ReactDOM.render(
   <Provider store={store}>

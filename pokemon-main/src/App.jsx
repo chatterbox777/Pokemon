@@ -4,22 +4,58 @@ import { connect } from "react-redux";
 import * as axios from "axios";
 import { Button, Card } from "react-bootstrap";
 import { useState } from "react";
-import { BrowserRouter, NavLink, Route } from "react-router-dom";
+import { BrowserRouter, NavLink, Redirect, Route } from "react-router-dom";
+import Pokemon from "./Pokemon/Pokemon";
 
 function App({ count }) {
   const [pokemons, setPokemons] = useState([]);
   const [selectedPokemon, setSelectedPokemon] = useState({});
   console.log("pokemons =>", pokemons);
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await axios("https://pokeapi.co/api/v2/pokemon");
-      setPokemons(result.data.results);
+    let isSubscribed = true;
+    const CancelToken = axios.CancelToken;
+    let cancel;
+    axios
+      .get("https://pokeapi.co/api/v2/pokemon", {
+        cancelToken: new CancelToken(function executor(c) {
+          // An executor function receives a cancel function as a parameter
+          cancel = c;
+        }),
+      })
+      .then((response) => {
+        if (isSubscribed) {
+          let pokemons = response.data.results;
+          setPokemons(pokemons);
+        }
+      });
+
+    return () => {
+      isSubscribed = false;
+      cancel();
     };
-    fetchData();
   }, []);
 
-  let getPokemonInfo = (pokemon, id) => {
-    setSelectedPokemon({ ...pokemon, id });
+  let getPokemonInfo = (pokemon, id, url) => {
+    const CancelToken = axios.CancelToken;
+    let cancel;
+    let isSubscribed = true;
+    axios
+      .get(url, {
+        cancelToken: new CancelToken(function executor(c) {
+          // An executor function receives a cancel function as a parameter
+          cancel = c;
+        }),
+      })
+      .then((response) => {
+        if (isSubscribed) {
+          const serverPokemonInfo = response.data;
+          setSelectedPokemon({ ...pokemon, id, serverPokemonInfo });
+        }
+      });
+    return () => {
+      isSubscribed = false;
+      cancel();
+    };
   };
   console.log("выбранный покемон =>", selectedPokemon);
   return (
@@ -43,7 +79,9 @@ function App({ count }) {
                     <NavLink to={`/pokemon/${index + 1}`}>
                       {" "}
                       <Button
-                        onClick={() => getPokemonInfo(pokemon, index + 1)}
+                        onClick={() =>
+                          getPokemonInfo(pokemon, index + 1, pokemon.url)
+                        }
                         variant="primary"
                       >
                         Get more info
@@ -51,11 +89,15 @@ function App({ count }) {
                     </NavLink>
                   </Card.Body>
                 </Card>
+                <Route path={`/pokemon/${index + 1}`}>
+                  <Redirect to={`/pokemon/${index + 1}`}></Redirect>
+                  <Pokemon
+                    selectedPokemon={selectedPokemon}
+                    index={index + 1}
+                  />
+                </Route>
               </div>
             ))}
-            {/* <Route path={`/pokemon/${index + 1}`}>
-              <Pokemon index={index + 1} />
-            </Route> */}
           </div>
         </div>
       </div>

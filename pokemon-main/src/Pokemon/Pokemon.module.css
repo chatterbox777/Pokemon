@@ -1,0 +1,10 @@
+.pokemonInfo {
+  position: fixed;
+  top: 6%;
+  left: 36%;
+  z-index: 1;
+  width: 477px;
+}
+.pokemonInfo img {
+  height: 194px;
+}
