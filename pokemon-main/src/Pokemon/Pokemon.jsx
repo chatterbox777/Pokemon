@@ -1,9 +1,12 @@
 import React from "react";
 import { Card } from "react-bootstrap";
-import { Redirect } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import styles from "./Pokemon.module.css";
 
-const Pokemon = ({ selectedPokemon: { serverPokemonInfo } }) => {
+const Pokemon = ({
+  selectedPokemon: { serverPokemonInfo },
+  getChosenAbility,
+}) => {
   console.log(serverPokemonInfo);
   {
     if (serverPokemonInfo) {
@@ -11,6 +14,7 @@ const Pokemon = ({ selectedPokemon: { serverPokemonInfo } }) => {
         <div className={styles.pokemonInfo}>
           <Card>
             <Card.Img
+              className={styles.pokemonInfoCard}
               variant="top"
               src={serverPokemonInfo.sprites.other.dream_world.front_default}
             />
@@ -20,12 +24,48 @@ const Pokemon = ({ selectedPokemon: { serverPokemonInfo } }) => {
           </Card>
           <br />
           <Card className="text-left">
+            <div className={`col-lg-12 ${styles.link}`}>
+              <NavLink to="/pokemons">
+                <div className={`col-lg-12 ${styles.linkToMainPage} text-left`}>
+                  <strong>*Return to the main page*</strong>
+                </div>
+              </NavLink>
+            </div>
             <Card.Body>
-              {serverPokemonInfo.stats.map((stat, index) => (
-                <Card.Text key={index}>
-                  {stat.stat.name} : {stat.base_stat}
-                </Card.Text>
-              ))}
+              <div className="row">
+                <div className="col-lg-6">
+                  {" "}
+                  {serverPokemonInfo.stats.map((stat, index) => (
+                    <Card.Text key={index}>
+                      {stat.stat.name} : {stat.base_stat}
+                    </Card.Text>
+                  ))}
+                </div>
+                <div className="col-lg-6 d-flex ">
+                  {" "}
+                  Type:
+                  {serverPokemonInfo.types.map((el, index) => (
+                    <p className="pl-lg-2" key={index}>
+                      {" "}
+                      {el.type.name}{" "}
+                    </p>
+                  ))}
+                </div>
+                <div className="col-lg-12 d-flex justify-content-center pt-lg-4">
+                  Abilities:
+                  {serverPokemonInfo.abilities.map((el, index) => (
+                    <NavLink key={index} to="/ability">
+                      <p
+                        onClick={() => getChosenAbility(el.ability.url)}
+                        className="pl-lg-2"
+                      >
+                        {" "}
+                        {el.ability.name}{" "}
+                      </p>
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
             </Card.Body>
             <Card.Img
               variant="bottom"

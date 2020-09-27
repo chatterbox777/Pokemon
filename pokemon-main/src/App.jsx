@@ -6,34 +6,12 @@ import { Button, Card } from "react-bootstrap";
 import { useState } from "react";
 import { BrowserRouter, NavLink, Redirect, Route } from "react-router-dom";
 import Pokemon from "./Pokemon/Pokemon";
+import Pokemons from "./Pokemons/Pokemons";
+import Ability from "./Ability/Ability";
 
-function App({ count }) {
-  const [pokemons, setPokemons] = useState([]);
+const App = (props) => {
   const [selectedPokemon, setSelectedPokemon] = useState({});
-  console.log("pokemons =>", pokemons);
-  useEffect(() => {
-    let isSubscribed = true;
-    const CancelToken = axios.CancelToken;
-    let cancel;
-    axios
-      .get("https://pokeapi.co/api/v2/pokemon", {
-        cancelToken: new CancelToken(function executor(c) {
-          // An executor function receives a cancel function as a parameter
-          cancel = c;
-        }),
-      })
-      .then((response) => {
-        if (isSubscribed) {
-          let pokemons = response.data.results;
-          setPokemons(pokemons);
-        }
-      });
-
-    return () => {
-      isSubscribed = false;
-      cancel();
-    };
-  }, []);
+  const [ability, setAbility] = useState({});
 
   let getPokemonInfo = (pokemon, id, url) => {
     const CancelToken = axios.CancelToken;
@@ -57,53 +35,35 @@ function App({ count }) {
       cancel();
     };
   };
+
+  let getChosenAbility = (url) => {
+    axios.get(url).then((response) => {
+      const serverAbilityInfo = response.data.effect_entries;
+      setAbility([...serverAbilityInfo]);
+      console.log([...serverAbilityInfo]);
+    });
+  };
   console.log("выбранный покемон =>", selectedPokemon);
   return (
     <BrowserRouter>
+      <Redirect to={"/pokemons"}></Redirect>
       <div className="App">
-        <div className="container">
-          <div className="row">
-            {pokemons.map((pokemon, index) => (
-              <div key={index} className="col-lg-4 mt-lg-4">
-                <Card style={{ width: "18rem" }}>
-                  <Card.Img
-                    variant="top"
-                    src="https://htstatic.imgsmail.ru/pic_original/14dda5f3f885a7304a22af4635aa54b0/1658985/"
-                  />
-                  <Card.Body>
-                    <Card.Title>{pokemon.name}</Card.Title>
-                    <Card.Text>
-                      Some quick example text to build on the card title and
-                      make up the bulk of the card's content.
-                    </Card.Text>
-                    <NavLink to={`/pokemon/${index + 1}`}>
-                      {" "}
-                      <Button
-                        onClick={() =>
-                          getPokemonInfo(pokemon, index + 1, pokemon.url)
-                        }
-                        variant="primary"
-                      >
-                        Get more info
-                      </Button>
-                    </NavLink>
-                  </Card.Body>
-                </Card>
-                <Route path={`/pokemon/${index + 1}`}>
-                  <Redirect to={`/pokemon/${index + 1}`}></Redirect>
-                  <Pokemon
-                    selectedPokemon={selectedPokemon}
-                    index={index + 1}
-                  />
-                </Route>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Route path="/pokemons">
+          <Pokemons getPokemonInfo={getPokemonInfo} />
+        </Route>
+        <Route path={`/pokemon`}>
+          <Pokemon
+            selectedPokemon={selectedPokemon}
+            getChosenAbility={getChosenAbility}
+          />
+        </Route>
+        <Route path="/ability">
+          <Ability ability={ability} />
+        </Route>
       </div>
     </BrowserRouter>
   );
-}
+};
 
 const mapStateToProps = (state, ownProps) => {
   console.log(state);

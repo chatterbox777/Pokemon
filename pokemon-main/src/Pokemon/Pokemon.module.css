@@ -4,7 +4,20 @@
   left: 36%;
   z-index: 1;
   width: 477px;
+  background-image: url("https://images3.alphacoders.com/661/thumb-1920-661606.jpg");
+  border-radius: 5px;
+}
+.pokemonInfoCard {
+  padding-top: 20px;
 }
 .pokemonInfo img {
   height: 194px;
+}
+.linkToMainPage {
+  padding: 5px;
+}
+.link a {
+  text-decoration: none;
+  cursor: pointer;
+  color: green;
 }
