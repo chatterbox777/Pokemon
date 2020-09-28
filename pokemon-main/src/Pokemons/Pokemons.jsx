@@ -3,10 +3,9 @@ import * as axios from "axios";
 import { Button, Card } from "react-bootstrap";
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
+import { connect } from "react-redux";
 
-const Pokemons = ({ getPokemonInfo }) => {
-  const [pokemons, setPokemons] = useState([]);
-
+const Pokemons = ({ setPokemonsInfo, getPokemonInfo, pokemons }) => {
   console.log("pokemons =>", pokemons);
   useEffect(() => {
     let isSubscribed = true;
@@ -22,7 +21,7 @@ const Pokemons = ({ getPokemonInfo }) => {
       .then((response) => {
         if (isSubscribed) {
           let pokemons = response.data.results;
-          setPokemons(pokemons);
+          setPokemonsInfo(pokemons);
         }
       });
 
@@ -68,4 +67,18 @@ const Pokemons = ({ getPokemonInfo }) => {
   );
 };
 
-export default Pokemons;
+const mapStateToProps = (state) => {
+  console.log(state);
+  return {
+    pokemons: state.pokemons.pokemons,
+  };
+};
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    setPokemonsInfo: (pokemons) =>
+      dispatch({ type: "POKEMONS_INIT", payload: pokemons }),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Pokemons);
