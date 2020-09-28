@@ -36,10 +36,10 @@ const App = (props) => {
     };
   };
 
-  let getChosenAbility = (url) => {
+  let getChosenAbility = (url, abilityName) => {
     axios.get(url).then((response) => {
       const serverAbilityInfo = response.data.effect_entries;
-      setAbility([...serverAbilityInfo]);
+      setAbility([...serverAbilityInfo, abilityName]);
       console.log([...serverAbilityInfo]);
     });
   };

@@ -1,5 +1,5 @@
 import React from "react";
-import { Card } from "react-bootstrap";
+import { Button, Card } from "react-bootstrap";
 import { NavLink } from "react-router-dom";
 import styles from "./Pokemon.module.css";
 
@@ -24,13 +24,6 @@ const Pokemon = ({
           </Card>
           <br />
           <Card className="text-left">
-            <div className={`col-lg-12 ${styles.link}`}>
-              <NavLink to="/pokemons">
-                <div className={`col-lg-12 ${styles.linkToMainPage} text-left`}>
-                  <strong>*Return to the main page*</strong>
-                </div>
-              </NavLink>
-            </div>
             <Card.Body>
               <div className="row">
                 <div className="col-lg-6">
@@ -56,7 +49,9 @@ const Pokemon = ({
                   {serverPokemonInfo.abilities.map((el, index) => (
                     <NavLink key={index} to="/ability">
                       <p
-                        onClick={() => getChosenAbility(el.ability.url)}
+                        onClick={() =>
+                          getChosenAbility(el.ability.url, el.ability.name)
+                        }
                         className="pl-lg-2"
                       >
                         {" "}
@@ -64,6 +59,15 @@ const Pokemon = ({
                       </p>
                     </NavLink>
                   ))}
+                </div>
+                <div className={`col-lg-12 ${styles.link} `}>
+                  <div
+                    className={`col-lg-12 ${styles.linkToMainPage} text-center`}
+                  >
+                    <NavLink to="/pokemons">
+                      <Button variant="primary">Go back</Button>
+                    </NavLink>
+                  </div>
                 </div>
               </div>
             </Card.Body>
